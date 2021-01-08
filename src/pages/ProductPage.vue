@@ -3,7 +3,7 @@
     <div class="content__top">
       <ul class="breadcrumbs">
         <li class="breadcrumbs__item">
-          <a class="breadcrumbs__link" href="#">
+          <a class="breadcrumbs__link" href="#" @click.prevent="gotoPage('main')">
             Каталог
           </a>
         </li>
