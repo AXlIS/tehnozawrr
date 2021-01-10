@@ -11,18 +11,10 @@
     </h3>
 
     <span class="catalog__price">
-              {{ product.price | numberFormat}} ₽
+              {{ product.price | numberFormat }} ₽
     </span>
 
-    <ul class="colors colors--black">
-      <li class="colors__item" v-for="item in product.colors" :key="item.id">
-        <label class="colors__label">
-          <input class="colors__radio sr-only" type="radio" :value="item.code" v-model="color">
-          <span class="colors__value" v-bind:style="{backgroundColor: item.code}">
-                  </span>
-        </label>
-      </li>
-    </ul>
+    <Palitra :colors="product.colors" :current-color-id="product.colors ? product.colors[0] : []"/>
   </li>
 </template>
 
@@ -33,6 +25,7 @@ import numberFormat from '@/helpers/numberFormat';
 import Palitra from '@/components/Palitra';
 
 export default {
+  components: { Palitra },
   data() {
     return {
       color: '#73B6EA'

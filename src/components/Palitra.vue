@@ -15,7 +15,7 @@ export default {
   props: ['colors', 'currentColorId'],
   data(){
     return {
-      colorId: 0,
+      colorId: this.currentColorId ? this.currentColorId.id : 0,
     }
   },
   methods: {
