@@ -27,15 +27,7 @@
 
       <fieldset class="form__block">
         <legend class="form__legend">Цвет</legend>
-        <ul class="colors">
-          <li class="colors__item" v-for="color in colors" :key="color.id">
-            <label class="colors__label">
-              <input class="colors__radio sr-only" type="checkbox" :value="color.id" v-model="currentColorId">
-              <span class="colors__value" :style="{backgroundColor: color.code}">
-                  </span>
-            </label>
-          </li>
-        </ul>
+        <Palitra :colors="colors" :current-color-id.sync="currentColorId"/>
       </fieldset>
 
       <fieldset class="form__block">
@@ -112,16 +104,18 @@
 <script>
 import categories from '@/data/categories';
 import colors from '@/data/colors';
+import Palitra from '@/components/Palitra';
 
 export default {
   name: 'ProductFilter',
+  components: {Palitra},
   props: ['priceFrom', 'priceTo', 'categoryId', 'colorId'],
   data() {
     return {
       currentPriceFrom: 0,
       currentPriceTo: 0,
       currentCategoryId: 0,
-      currentColorId: [],
+      currentColorId: 0,
     };
   },
   computed: {
@@ -158,7 +152,7 @@ export default {
       this.$emit('update:priceFrom', 0);
       this.$emit('update:priceTo', 0);
       this.$emit('update:categoryId', 0);
-      this.$emit('update:colorId', [])
+      this.$emit('update:colorId', 0)
     }
   }
 };

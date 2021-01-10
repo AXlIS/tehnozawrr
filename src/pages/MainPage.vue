@@ -57,11 +57,8 @@ export default {
         filteredProducts = filteredProducts.filter(product => product.categoryId === this.filterCategoryId);
       }
       if (this.filterColorId) {
-        this.filterColorId.forEach(item => {
-          filteredProducts = filteredProducts.filter(products => products.colors.find(color => color.id === item))
-        })
-
-      }
+          filteredProducts = filteredProducts.filter(products => products.colors.find(color => color.id === this.filterColorId))
+        }
       return filteredProducts;
     },
     products() {

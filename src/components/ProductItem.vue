@@ -17,8 +17,8 @@
     <ul class="colors colors--black">
       <li class="colors__item" v-for="item in product.colors" :key="item.id">
         <label class="colors__label">
-          <input class="colors__radio sr-only" type="radio" :value="item.code">
-          <span class="colors__value" v-bind:style="{backgroundColor: item.code}" >
+          <input class="colors__radio sr-only" type="radio" :value="item.code" v-model="color">
+          <span class="colors__value" v-bind:style="{backgroundColor: item.code}">
                   </span>
         </label>
       </li>
@@ -30,6 +30,7 @@
 
 import gotoPage from '@/helpers/gotoPage';
 import numberFormat from '@/helpers/numberFormat';
+import Palitra from '@/components/Palitra';
 
 export default {
   data() {
