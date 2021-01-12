@@ -162,6 +162,14 @@ export default [
     title: 'Наушники AirPods с беспроводным зарядным футляром',
     price: 16560,
     img: 'img/airpods.jpg',
+    colors: []
+  },
+  {
+    id: 11,
+    categoryId: 3,
+    title: 'Роллерсёрф Razor RipStik Air Pro',
+    price: 6690,
+    img: 'img/ripstik.jpg',
     colors: [
       {
         id: 2,
@@ -179,14 +187,6 @@ export default [
         code: '#000',
       }
     ]
-  },
-  {
-    id: 11,
-    categoryId: 3,
-    title: 'Роллерсёрф Razor RipStik Air Pro',
-    price: 6690,
-    img: 'img/ripstik.jpg',
-    colors: []
   },
   {
     id: 12,

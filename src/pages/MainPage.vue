@@ -11,7 +11,7 @@
 
     <div class="content__catalog">
       <ProductFilter :price-from.sync="filterPriceFrom" :price-to.sync="filterPriceTo"
-                     :category-id.sync="filterCategoryId" :color-id.sync="filterColorId"/>
+                     :category-id.sync="filterCategoryId" :color-id.sync="filterColorId" :page.sync="page"/>
       <section class="catalog">
         <ProductList :products="products"/>
         <BasePagination v-model="page" :count="countProducts" :per-page="productPerPage"/>
