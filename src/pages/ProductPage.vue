@@ -32,41 +32,17 @@
           {{ product.title }}
         </h2>
         <div class="item__form">
-          <form class="form" action="#" method="POST">
+          <form class="form" action="#" method="POST" @submit.prevent="addToCart">
             <b class="item__price">
-              {{ product.price | numberFormat}}
+              {{ product.price | numberFormat }} ₽
             </b>
 
-            <fieldset class="form__block">
+            <fieldset class="form__block" v-if="product.colors.length > 0">
               <legend class="form__legend">Цвет:</legend>
-              <ul class="colors">
-                <li class="colors__item">
-                  <label class="colors__label">
-                    <input class="colors__radio sr-only" type="radio" name="color-item" value="blue"
-                           checked="">
-                    <span class="colors__value" style="background-color: #73B6EA;">
-                    </span>
-                  </label>
-                </li>
-                <li class="colors__item">
-                  <label class="colors__label">
-                    <input class="colors__radio sr-only" type="radio" name="color-item" value="yellow">
-                    <span class="colors__value" style="background-color: #FFBE15;">
-                    </span>
-                  </label>
-                </li>
-                <li class="colors__item">
-                  <label class="colors__label">
-                    <input class="colors__radio sr-only" type="radio" name="color-item" value="gray">
-                    <span class="colors__value" style="background-color: #939393;">
-                  </span></label>
-                </li>
-              </ul>
+              <Palitra :colors="product.colors" :current-color-id.sync="currentColor"/>
             </fieldset>
-
             <fieldset class="form__block">
               <legend class="form__legend">Объемб в ГБ:</legend>
-
               <ul class="sizes sizes--primery">
                 <li class="sizes__item">
                   <label class="sizes__label">
@@ -104,7 +80,7 @@
                   </svg>
                 </button>
 
-                <input type="text" value="1" name="count">
+                <input type="text" min="0" v-model.number="productAmount">
 
                 <button type="button" aria-label="Добавить один товар">
                   <svg width="12" height="12" fill="currentColor">
@@ -191,11 +167,18 @@
 
 import products from '@/data/products';
 import categories from '@/data/categories';
-import gotoPage from '@/helpers/gotoPage';
 import numberFormat from '@/helpers/numberFormat';
+import Palitra from '@/components/Palitra';
 
 export default {
   name: 'ProductPage',
+  components: { Palitra },
+  data() {
+    return {
+      productAmount: 1,
+      currentColor: 0
+    };
+  },
   filters: {
     numberFormat
   },
@@ -208,7 +191,12 @@ export default {
     },
   },
   methods: {
-    gotoPage
+    addToCart() {
+      this.$store.commit('addProductToCart', {
+        productId: this.product.id,
+        amount: this.productAmount
+      });
+    }
   }
 };
 </script>

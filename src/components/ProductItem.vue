@@ -14,13 +14,12 @@
               {{ product.price | numberFormat }} ₽
     </span>
 
-    <Palitra :colors="product.colors" :current-color-id="product.colors ? product.colors[0] : []"/>
+    <Palitra class="colors colors--black" :colors="product.colors" :current-color-id.sync="currentColorId"/>
   </li>
 </template>
 
 <script>
 
-import gotoPage from '@/helpers/gotoPage';
 import numberFormat from '@/helpers/numberFormat';
 import Palitra from '@/components/Palitra';
 
@@ -28,7 +27,7 @@ export default {
   components: { Palitra },
   data() {
     return {
-      color: '#73B6EA'
+      currentColorId: 0
     };
   },
   filters: {
@@ -36,9 +35,12 @@ export default {
   },
   name: 'ProductItem',
   props: ['product'],
-  methods: {
-    gotoPage
-  }
+  // methods: {
+  //   productFistColor() {
+  //     let productColor = this.product.colors[0]
+  //     return typeof productColor !== 'undefined' ? productColor.id : 0
+  //   },
+  // }
 };
 </script>
 
