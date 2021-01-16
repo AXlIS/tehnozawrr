@@ -1,5 +1,5 @@
 <template>
-  <ul class="catalog__pagination pagination">
+  <ul class="catalog__pagination pagination" style="margin: auto">
     <li class="pagination__item">
       <a class="pagination__link pagination__link--arrow" href="#"
          :class="{'pagination__link--disabled': page <= 1}"

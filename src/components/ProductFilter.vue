@@ -102,13 +102,13 @@
 </template>
 
 <script>
-import categories from '@/data/categories';
-import colors from '@/data/colors';
 import Palitra from '@/components/Palitra';
+import axios from 'axios';
+import {API_BASE_URL} from '@/config';
 
 export default {
   name: 'ProductFilter',
-  components: {Palitra},
+  components: { Palitra },
   props: ['priceFrom', 'priceTo', 'categoryId', 'colorId', 'page'],
   data() {
     return {
@@ -116,15 +116,19 @@ export default {
       currentPriceTo: 0,
       currentCategoryId: 0,
       currentColorId: 0,
+
+      colorsData: null,
+      categoriesData: null
     };
   },
   computed: {
-
     categories() {
-      return categories;
+      return this.categoriesData ? this.categoriesData.items : [];
     },
-    colors(){
-      return colors;
+    colors() {
+      return this.colorsData
+        ? this.colorsData.items.filter(color => color.code !== '#fafafa')
+        : []
     }
   },
   watch: {
@@ -137,7 +141,7 @@ export default {
     categoryId(value) {
       this.currentCategoryId = value;
     },
-    colorId(value){
+    colorId(value) {
       this.currentColorId = value;
     }
   },
@@ -147,15 +151,29 @@ export default {
       this.$emit('update:priceTo', this.currentPriceTo);
       this.$emit('update:categoryId', this.currentCategoryId);
       this.$emit('update:colorId', this.currentColorId);
-      this.$emit('update:page', 1)
+      this.$emit('update:page', 1);
     },
     reset() {
       this.$emit('update:priceFrom', 0);
       this.$emit('update:priceTo', 0);
       this.$emit('update:categoryId', 0);
       this.$emit('update:colorId', 0);
-      this.$emit('update:page', 1)
+      this.$emit('update:page', 1);
+    },
+    loadCategories() {
+      axios
+        .get(`${API_BASE_URL}/api/productCategories`)
+        .then(response => this.categoriesData = response.data);
+    },
+    loadColors() {
+      axios
+        .get(`${API_BASE_URL}/api/colors`)
+        .then(response => this.colorsData = response.data);
     }
+  },
+  created() {
+    this.loadCategories();
+    this.loadColors();
   }
 };
 </script>

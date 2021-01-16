@@ -1,5 +1,19 @@
 <template>
-  <main class="content container">
+  <main class="content container"
+        style="text-align: center;
+    font-family: PressStart;
+    font-size: 2em;
+    margin-top: 100px;
+    margin-bottom: 300px;" v-if="productLoading">
+    Загрузка товара...
+  </main>
+  <main class="content container" v-else-if="productLoadingFailed === true" style="text-align: center; height: 500px">
+    <h2   style="text-align: center; font-family: 'PressStart'; margin: 100px">Такого товара у нас нет..(</h2>
+    <button class="error-button" @click.prevent="loadProduct" style="width: 300px; height: 40px">
+      Попробовать еще раз
+    </button>
+  </main>
+  <main class="content container" v-else>
     <div class="content__top">
       <ul class="breadcrumbs">
         <li class="breadcrumbs__item">
@@ -21,9 +35,9 @@
     </div>
 
     <section class="item">
-      <div class="item__pics pics">
+      <div class="item__pics pics" style="margin-top: 50px">
         <div class="pics__wrapper">
-          <img width="450" height="583" :src="product.img" :alt="product.title">
+          <img width="450" height="583" :src="product.image" :alt="product.title">
         </div>
       </div>
       <div class="item__info">
@@ -74,7 +88,7 @@
 
             <div class="item__row">
               <div class="form__counter">
-                <button type="button" aria-label="Убрать один товар">
+                <button type="button" aria-label="Убрать один товар" @click.prevent="changeAmount(-1)">
                   <svg width="12" height="12" fill="currentColor">
                     <use xlink:href="#icon-minus"></use>
                   </svg>
@@ -82,7 +96,7 @@
 
                 <input type="text" min="0" v-model.number="productAmount">
 
-                <button type="button" aria-label="Добавить один товар">
+                <button type="button" aria-label="Добавить один товар" @click.prevent="changeAmount(1)">
                   <svg width="12" height="12" fill="currentColor">
                     <use xlink:href="#icon-plus"></use>
                   </svg>
@@ -165,10 +179,10 @@
 
 <script>
 
-import products from '@/data/products';
-import categories from '@/data/categories';
 import numberFormat from '@/helpers/numberFormat';
 import Palitra from '@/components/Palitra';
+import axios from 'axios';
+import { API_BASE_URL } from '@/config';
 
 export default {
   name: 'ProductPage',
@@ -176,7 +190,11 @@ export default {
   data() {
     return {
       productAmount: 1,
-      currentColor: 0
+      currentColor: 0,
+
+      productData: null,
+      productLoading: false,
+      productLoadingFailed: false
     };
   },
   filters: {
@@ -184,10 +202,15 @@ export default {
   },
   computed: {
     product() {
-      return products.find(product => product.id === +this.$route.params.id);
+      return this.productData
+        ? {
+        ...this.productData,
+          image: this.productData.image.file.url
+        }
+        : [];
     },
     category() {
-      return categories.find(category => category.id === this.product.categoryId);
+      return this.productData.category;
     },
   },
   methods: {
@@ -196,11 +219,50 @@ export default {
         productId: this.product.id,
         amount: this.productAmount
       });
+    },
+    loadProduct() {
+      this.productLoading = true;
+      this.productLoadingFailed = false;
+      axios
+        .get(`${API_BASE_URL}/api/products/${this.$route.params.id}`)
+        .then(response => this.productData = response.data)
+        .catch(() => this.productLoadingFailed = true)
+        .then(() => this.productLoading = false);
+    },
+    changeAmount(count){
+      if (this.productAmount + count > 0){
+        this.productAmount += count
+      }
+    }
+  },
+  watch: {
+    '$route.params.id': {
+      handler(){
+        this.loadProduct();
+      },
+      immediate: true
     }
   }
 };
 </script>
 
 <style scoped>
+.error-button{
+  background-color: #9eff00;
+  border: 1px solid #9eff00;
+  font-family: "PressStart";
+  color: #222;
+  font-size: 13px;
+  height: 20%;
+  transition: .2s;
+}
 
+.error-button:hover{
+  background-color: transparent;
+}
+
+.error-button:active{
+  border: 1px solid black;
+  outline: none;
+}
 </style>
