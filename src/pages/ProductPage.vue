@@ -8,7 +8,7 @@
     Загрузка товара...
   </main>
   <main class="content container" v-else-if="productLoadingFailed === true" style="text-align: center; height: 500px">
-    <h2   style="text-align: center; font-family: 'PressStart'; margin: 100px">Такого товара у нас нет..(</h2>
+    <h2 style="text-align: center; font-family: 'PressStart'; margin: 100px">Такого товара у нас нет..(</h2>
     <button class="error-button" @click.prevent="loadProduct" style="width: 300px; height: 40px">
       Попробовать еще раз
     </button>
@@ -87,21 +87,8 @@
             </fieldset>
 
             <div class="item__row">
-              <div class="form__counter">
-                <button type="button" aria-label="Убрать один товар" @click.prevent="changeAmount(-1)">
-                  <svg width="12" height="12" fill="currentColor">
-                    <use xlink:href="#icon-minus"></use>
-                  </svg>
-                </button>
 
-                <input type="text" min="0" v-model.number="productAmount">
-
-                <button type="button" aria-label="Добавить один товар" @click.prevent="changeAmount(1)">
-                  <svg width="12" height="12" fill="currentColor">
-                    <use xlink:href="#icon-plus"></use>
-                  </svg>
-                </button>
-              </div>
+              <AmountChange class="form__counter" :amount.sync="productAmount"/>
 
               <button class="button button--primery" type="submit">
                 В корзину
@@ -183,10 +170,14 @@ import numberFormat from '@/helpers/numberFormat';
 import Palitra from '@/components/Palitra';
 import axios from 'axios';
 import { API_BASE_URL } from '@/config';
+import AmountChange from '@/components/AmountChange';
 
 export default {
   name: 'ProductPage',
-  components: { Palitra },
+  components: {
+    Palitra,
+    AmountChange
+  },
   data() {
     return {
       productAmount: 1,
@@ -204,7 +195,7 @@ export default {
     product() {
       return this.productData
         ? {
-        ...this.productData,
+          ...this.productData,
           image: this.productData.image.file.url
         }
         : [];
@@ -229,15 +220,15 @@ export default {
         .catch(() => this.productLoadingFailed = true)
         .then(() => this.productLoading = false);
     },
-    changeAmount(count){
-      if (this.productAmount + count > 0){
-        this.productAmount += count
+    changeAmount(count) {
+      if (this.productAmount + count > 0) {
+        this.productAmount += count;
       }
     }
   },
   watch: {
     '$route.params.id': {
-      handler(){
+      handler() {
         this.loadProduct();
       },
       immediate: true
@@ -247,7 +238,7 @@ export default {
 </script>
 
 <style scoped>
-.error-button{
+.error-button {
   background-color: #9eff00;
   border: 1px solid #9eff00;
   font-family: "PressStart";
@@ -257,11 +248,11 @@ export default {
   transition: .2s;
 }
 
-.error-button:hover{
+.error-button:hover {
   background-color: transparent;
 }
 
-.error-button:active{
+.error-button:active {
   border: 1px solid black;
   outline: none;
 }
