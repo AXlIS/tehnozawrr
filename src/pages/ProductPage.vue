@@ -90,10 +90,13 @@
 
               <AmountChange class="form__counter" :amount.sync="productAmount"/>
 
-              <button class="button button--primery" type="submit">
+              <button class="button button--primery" type="submit" :disabled="productAddSending">
                 В корзину
               </button>
             </div>
+
+            <div class="added" v-show="productAdded">Товар добавлен в корзину</div>
+            <div class="sending" v-show="productAddSending">Добавляем Ваш товар...</div>
           </form>
         </div>
       </div>
@@ -171,6 +174,7 @@ import Palitra from '@/components/Palitra';
 import axios from 'axios';
 import { API_BASE_URL } from '@/config';
 import AmountChange from '@/components/AmountChange';
+import { mapActions } from 'vuex';
 
 export default {
   name: 'ProductPage',
@@ -185,7 +189,10 @@ export default {
 
       productData: null,
       productLoading: false,
-      productLoadingFailed: false
+      productLoadingFailed: false,
+
+      productAdded: false,
+      productAddSending: false
     };
   },
   filters: {
@@ -205,11 +212,20 @@ export default {
     },
   },
   methods: {
+    ...mapActions(['addProductToCart']),
+
     addToCart() {
-      this.$store.commit('addProductToCart', {
+      this.productAdded = false;
+      this.productAddSending = true;
+
+      this.addProductToCart({
         productId: this.product.id,
         amount: this.productAmount
-      });
+      })
+        .then(() => {
+          this.productAdded = true;
+          this.productAddSending = false;
+        });
     },
     loadProduct() {
       this.productLoading = true;
@@ -220,11 +236,6 @@ export default {
         .catch(() => this.productLoadingFailed = true)
         .then(() => this.productLoading = false);
     },
-    changeAmount(count) {
-      if (this.productAmount + count > 0) {
-        this.productAmount += count;
-      }
-    }
   },
   watch: {
     '$route.params.id': {
@@ -233,7 +244,7 @@ export default {
       },
       immediate: true
     }
-  }
+  },
 };
 </script>
 
@@ -255,5 +266,17 @@ export default {
 .error-button:active {
   border: 1px solid black;
   outline: none;
+}
+
+.added {
+  margin-top: 20px;
+  font-family: "PressStart";
+  color: #9eff00;
+}
+
+.sending {
+  margin-top: 20px;
+  font-family: "PressStart";
+  color: coral;
 }
 </style>
