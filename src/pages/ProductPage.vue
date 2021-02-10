@@ -248,7 +248,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss">
 .error-button {
   background-color: #9eff00;
   border: 1px solid #9eff00;
