@@ -38,7 +38,8 @@ export default new Vuex.Store({
         item.amount = amount;
       }
     },
-    deleteCartProduct(state, productId) {
+    deleteCartProduct(state, {productId}) {
+      console.log(productId)
       state.cartProducts = state.cartProducts.filter(item => item.productId !== productId);
     },
     updateUserAccessKey(state, accessKey) {
@@ -151,7 +152,6 @@ export default new Vuex.Store({
         })
         .then(response => {
           context.commit('updateCartProductsData', response.data.items);
-          context.commit('syncCartProducts');
         })
         .catch(() => {
           context.commit('syncCartProducts');
