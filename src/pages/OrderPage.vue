@@ -23,39 +23,28 @@
         Корзина
       </h1>
       <span class="content__info">
-        3 товара
+        {{ products.length }} товар(-a)
       </span>
     </div>
 
     <section class="cart">
-      <form class="cart__form form" action="#" method="POST">
+      <form class="cart__form form" action="#" method="POST" @submit.prevent="order">
         <div class="cart__field">
           <div class="cart__data">
-            <label class="form__label">
-              <input class="form__input" type="text" name="name" placeholder="Введите ваше полное имя">
-              <span class="form__value">ФИО</span>
-            </label>
+            <BaseFormText v-model="formData.name" title="ФИО" :error="formError.name"
+                          placeholder="Введите ваше полное имя"/>
 
-            <label class="form__label">
-              <input class="form__input" type="text" name="address" placeholder="Введите ваш адрес">
-              <span class="form__value">Адрес доставки</span>
-            </label>
+            <BaseFormText v-model="formData.address" title="Адрес доставки" :error="formError.address"
+                          placeholder="Введите ваш адрес"/>
 
-            <label class="form__label">
-              <input class="form__input" type="tel" name="phone" placeholder="Введите ваш телефон">
-              <span class="form__value">Телефон</span>
-              <span class="form__error">Неверный формат телефона</span>
-            </label>
+            <BaseFormText v-model="formData.phone" title="Телефон" :error="formError.phone"
+                          placeholder="Введите ваш телефон"/>
 
-            <label class="form__label">
-              <input class="form__input" type="email" name="email" placeholder="Введи ваш Email">
-              <span class="form__value">Email</span>
-            </label>
+            <BaseFormText v-model="formData.email" title="Email" :error="formError.email"
+                          placeholder="Введи ваш Email"/>
 
-            <label class="form__label">
-              <textarea class="form__input form__input--area" name="comments" placeholder="Ваши пожелания"></textarea>
-              <span class="form__value">Комментарий к заказу</span>
-            </label>
+            <BaseFormTextarea :error="formError.comment" v-model="formData.comment" placeholder="Ваши пожелания"
+                              title="Комментарий к заказу"/>
           </div>
 
           <div class="cart__options">
@@ -63,7 +52,8 @@
             <ul class="cart__options options">
               <li class="options__item">
                 <label class="options__label">
-                  <input class="options__radio sr-only" type="radio" name="delivery" value="0" checked="">
+                  <input class="options__radio sr-only" v-model="delivery" type="radio" name="delivery" value="0"
+                         checked="">
                   <span class="options__value">
                     Самовывоз <b>бесплатно</b>
                   </span>
@@ -71,7 +61,7 @@
               </li>
               <li class="options__item">
                 <label class="options__label">
-                  <input class="options__radio sr-only" type="radio" name="delivery" value="500">
+                  <input class="options__radio sr-only" v-model="delivery" type="radio" name="delivery" value="500">
                   <span class="options__value">
                     Курьером <b>500 ₽</b>
                   </span>
@@ -111,18 +101,18 @@
           </ul>
 
           <div class="cart__total">
-            <p>Доставка: <b>500 ₽</b></p>
-            <p>Итого: <b>{{ products.length }}</b> товар(-а) на сумму <b>{{ price + 500 | numberFormat }} ₽</b></p>
+            <p v-if="parseInt(delivery)">Доставка: <b>500 ₽</b></p>
+            <p>Итого: <b>{{ products.length }}</b> товар(-а) на сумму <b>{{ price + parseInt(delivery) | numberFormat }}
+              ₽</b></p>
           </div>
-
           <button class="cart__button button button--primery" type="submit">
             Оформить заказ
           </button>
         </div>
-        <div class="cart__error form__error-block">
+        <div class="cart__error form__error-block" v-if="formErrorMessage">
           <h4>Заявка не отправлена!</h4>
           <p>
-            Похоже произошла ошибка. Попробуйте отправить снова или перезагрузите страницу.
+            {{ formErrorMessage }}
           </p>
         </div>
       </form>
@@ -134,9 +124,25 @@
 
 import { mapGetters } from 'vuex';
 import numberFormat from '../helpers/numberFormat';
+import BaseFormText from '../components/BaseFormText';
+import BaseFormTextarea from '../components/BaseFormTextarea';
+import axios from 'axios';
+import { API_BASE_URL } from '../config';
 
 export default {
   name: 'OrderPage',
+  components: {
+    BaseFormText,
+    BaseFormTextarea
+  },
+  data() {
+    return {
+      formData: {},
+      formError: {},
+      formErrorMessage: '',
+      delivery: 0
+    };
+  },
   computed: {
     ...mapGetters({
       products: 'cartDetailProducts',
@@ -145,13 +151,39 @@ export default {
   },
   filters: {
     numberFormat
+  },
+  methods: {
+    order() {
+      this.formError = {};
+
+      axios
+        .post(`${API_BASE_URL}/api/orders`, {
+          ...this.formData
+        }, {
+          params: {
+            userAccessKey: this.$store.state.userAccessKey
+          }
+        })
+        .then(response => {
+          this.$store.commit('resetCart');
+          this.$store.commit('updateOrderInfo', response.data);
+          this.$router.push({
+            name: 'orderInfo',
+            params: { id: response.data.id }
+          });
+        })
+        .catch(error => {
+          this.formError = error.response.data.error.request || {};
+          this.formErrorMessage = error.response.data.error.message;
+        });
+    }
   }
 };
 </script>
 
 <style scoped>
- .link{
-   text-decoration: none;
-   color: #b9b9b9;
- }
+.link {
+  text-decoration: none;
+  color: #b9b9b9;
+}
 </style>
