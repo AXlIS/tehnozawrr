@@ -84,7 +84,7 @@ export default new Vuex.Store({
         sum + item.product.price * item.amount, 0
       );
     },
-    getOrderInfo(state){
+    orderInfo(state){
       return state.orderInfo
     }
   },

@@ -32,7 +32,7 @@
             Наши менеджеры свяжутся с&nbsp;Вами в&nbsp;течение часа для уточнения деталей доставки.
           </p>
 
-          <ul class="dictionary">
+          <ul class="dictionary" v-if="orderInfo">
             <li class="dictionary__item">
               <span class="dictionary__key">
                 Получатель
@@ -76,7 +76,7 @@
           </ul>
         </div>
 
-        <div class="cart__block">
+        <div class="cart__block" v-if="orderInfo">
           <ul class="cart__orders">
             <li class="cart__order" v-for="item in orderInfo.basket.items" :key="item.id">
               <h3>{{ item.product.title }}</h3>
@@ -101,18 +101,27 @@ import numberFormat from '../helpers/numberFormat';
 
 export default {
   name: 'OrderInfoPage',
-  created() {
-    if (this.$store.state.orderInfo && this.$store.state.orderInfo.id === this.$route.params.id) {
-      return;
-    }
-    this.$store.dispatch('loadOrderInfo', this.$route.params.id);
-  },
+  // created() {
+  //   if (this.$store.state.orderInfo && this.$store.state.orderInfo.id === this.$route.params.id) {
+  //     return;
+  //   }
+  //   this.$store.dispatch('loadOrderInfo', this.$route.params.id)
+  //     .catch(() => this.$router.push({ name: 'notFound' }));
+  // },
   computed: {
-    ...mapGetters({
-      orderInfo: 'getOrderInfo'
-    })
+    ...mapGetters(['orderInfo'])
   },
-  filters: { numberFormat }
+  filters: { numberFormat },
+  watch: {
+    $route() {
+      if (this.$store.state.orderInfo && this.$store.state.orderInfo.id === this.$route.params.id) {
+        return;
+      }
+
+      this.$store.dispatch('loadOrderInfo', +this.$route.params.id)
+        .catch(() => this.$router.push({ name: 'notFound' }));
+    }
+  }
 };
 </script>
 
