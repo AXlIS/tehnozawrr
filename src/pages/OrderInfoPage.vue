@@ -113,13 +113,16 @@ export default {
   },
   filters: { numberFormat },
   watch: {
-    $route() {
-      if (this.$store.state.orderInfo && this.$store.state.orderInfo.id === this.$route.params.id) {
-        return;
-      }
+    '$route.params.id': {
+      handler() {
+        if (this.$store.state.orderInfo && this.$store.state.orderInfo.id === this.$route.params.id) {
+          return;
+        }
 
-      this.$store.dispatch('loadOrderInfo', +this.$route.params.id)
-        .catch(() => this.$router.push({ name: 'notFound' }));
+        this.$store.dispatch('loadOrderInfo', +this.$route.params.id)
+          .catch(() => this.$router.push({ name: 'notFound' }));
+      },
+      immediate: true
     }
   }
 };
