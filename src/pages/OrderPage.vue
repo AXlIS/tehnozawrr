@@ -105,9 +105,10 @@
             <p>Итого: <b>{{ products.length }}</b> товар(-а) на сумму <b>{{ price + parseInt(delivery) | numberFormat }}
               ₽</b></p>
           </div>
-          <button class="cart__button button button--primery" type="submit">
+          <button class="cart__button button button--primery" type="submit" :disabled="products.length === 0">
             Оформить заказ
           </button>
+          <div class="sending" v-show="products.length === 0">Корзина пуста</div>
         </div>
         <div class="cart__error form__error-block" v-if="formErrorMessage">
           <h4>Заявка не отправлена!</h4>
