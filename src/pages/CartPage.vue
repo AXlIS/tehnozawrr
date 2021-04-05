@@ -60,7 +60,6 @@ export default {
     numberFormat
   },
   computed: {
-
     ...mapGetters({
       products: 'cartDetailProducts',
       totalPrice: 'cartTotalPrice'
