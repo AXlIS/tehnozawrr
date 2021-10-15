@@ -1,5 +1,3 @@
-# skilbox
-
 ## Project setup
 ```
 npm install
